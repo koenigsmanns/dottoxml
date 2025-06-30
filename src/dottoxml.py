@@ -1,3 +1,11 @@
+# /// script
+# requires-python = ">=3.13"
+# dependencies = [
+#     "pydantic",
+#     "unicode",
+# ]
+# ///
+
 # coding: latin-1
 # Copyright (c) 2009,2010,2011,2012,2013,2014 Dirk Baechle.
 # www: https://bitbucket.org/dirkbaechle/dottoxml
@@ -31,14 +39,14 @@ import dot
 usgmsg = "Usage: dottoxml.py [options] infile.dot outfile.graphml"
 
 def usage():
-    print "dottoxml 1.6, 2014-04-10, Dirk Baechle\n"
-    print usgmsg
-    print "Hint: Try '-h' or '--help' for further infos!"
+    print("dottoxml 1.6, 2014-04-10, Dirk Baechle\n")
+    print(usgmsg)
+    print("Hint: Try '-h' or '--help' for further infos!")
 
 def exportDot(o, nodes, edges, options):
     o.write("graph [\n")
 
-    for k,nod in nodes.iteritems():
+    for k,nod in nodes.items():
         nod.exportDot(o,options)
     for el in edges:
         el.exportDot(o,nodes,options)
@@ -49,7 +57,7 @@ def exportGML(o, nodes, edges, options):
     o.write("  directed 1\n")
     o.write("  IsPlanar 1\n")
 
-    for k,nod in nodes.iteritems():
+    for k,nod in nodes.items():
         nod.exportGML(o,options)
     for el in edges:
         el.exportGML(o,nodes,options)
@@ -104,7 +112,7 @@ def exportGraphml(o, nodes, edges, options):
     graph.setAttribute(u'parse.nodes',u'%d' % len(nodes))
     graph.setAttribute(u'parse.order', u'free')    
     
-    for k,nod in nodes.iteritems():
+    for k,nod in nodes.items():
         nod.exportGraphml(doc, graph, options)
     for el in edges:
         el.exportGraphml(doc, graph, nodes, options)
@@ -121,7 +129,7 @@ def exportGraphml(o, nodes, edges, options):
 
 def exportGDF(o, nodes, edges, options):
     o.write("nodedef> name\n")
-    for k,nod in nodes.iteritems():
+    for k,nod in nodes.items():
         nod.exportGDF(o, options)
     for el in edges:
         el.exportGDF(o,nodes,options)
@@ -208,14 +216,14 @@ def main():
         options.OutputEncoding = preferredEncoding
     
     if options.verbose:
-        print "Input file: %s " % infile
-        print "Output file: %s " % outfile
-        print "Output format: %s" % options.format.lower()
-        print "Input encoding: %s" % options.InputEncoding
+        print("Input file: %s " % infile)
+        print("Output file: %s " % outfile)
+        print("Output format: %s" % options.format.lower())
+        print("Input encoding: %s" % options.InputEncoding)
         if options.format.lower() == "graphml":
-            print "Output encoding: utf-8 (fix for Graphml)"
+            print("Output encoding: utf-8 (fix for Graphml)")
         else:
-            print "Output encoding: %s" % options.OutputEncoding
+            print("Output encoding: %s" % options.OutputEncoding)
 
     # Collect nodes and edges
     nodes = {}
@@ -230,14 +238,14 @@ def main():
 
     idx = 0
     while idx < len(content):
-        l = unicode(content[idx], options.InputEncoding)
+        l = str(content[idx] + options.InputEncoding)
         if '->' in l:
             # Check for multiline edge
             if '[' in l and ']' not in l:
                 ml = ""
                 while ']' not in ml:
                     idx += 1
-                    ml = unicode(content[idx], options.InputEncoding)
+                    ml = str(content[idx] + options.InputEncoding)
                     l = ' '.join([l.rstrip(), ml.lstrip()])
             # Process edge
             e = dot.Edge()
@@ -253,7 +261,7 @@ def main():
                 ml = ""
                 while ']' not in ml:
                     idx += 1
-                    ml = unicode(content[idx], options.InputEncoding)
+                    ml = str(content[idx] + options.InputEncoding)
                     l = ' '.join([l.rstrip(), ml.lstrip()])
             # Process node
             n = dot.Node()
@@ -280,18 +288,18 @@ def main():
                 if ienc != "":
                     options.InputEncoding = ienc
                     if options.verbose:
-                        print "Info: Picked up input encoding '%s' from the DOT file." % ienc
+                        print("Info: Picked up input encoding '%s' from the DOT file." % ienc)
         idx += 1
 
     # Add single nodes, if required
     for e in edges:
-        if not nodes.has_key(e.src):
+        if not nodes.__contains__(e.src):
             n = dot.Node()
             n.label = e.src
             n.id = nid
             nid += 1
             nodes[e.src] = n
-        if not nodes.has_key(e.dest):
+        if not nodes.__contains__(e.dest):
             n = dot.Node()
             n.label = e.dest
             n.id = nid
@@ -301,20 +309,20 @@ def main():
         nodes[e.dest].referenced = True
 
     if options.verbose:
-        print "\nNodes: %d " % len(nodes)
-        print "Edges: %d " % len(edges)
+        print("\nNodes: %d " % len(nodes))
+        print("Edges: %d " % len(edges))
     
     if options.sweep:
         rnodes = {}
-        for key, n in nodes.iteritems():
+        for key, n in nodes.items():
             if n.referenced:
                 rnodes[key] = n
         nodes = rnodes
         if options.verbose:
-            print "\nNodes after sweep: %d " % len(nodes)
+            print("\nNodes after sweep: %d " % len(nodes))
     
     # Output
-    o = open(outfile, 'w')
+    o = open(outfile, 'wb')
     format = options.format.lower()
     if format == 'dot':
         exportDot(o, nodes, edges, options)
@@ -327,8 +335,9 @@ def main():
     o.close()
 
     if options.verbose:
-        print "\nDone."
+        print("\nDone.")
 
 if __name__ == '__main__':
     main()
     
+
