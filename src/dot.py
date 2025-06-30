@@ -100,7 +100,7 @@ def getColorAttribute(attribs, key, defaultcol, conf):
         to RGB format if required
     """
     if conf.Colors:
-        if attribs.has_key(key):
+        if attribs.__contains__(key):
             return colorNameToRgb(attribs[key], defaultcol)
     return defaultcol
 
@@ -245,7 +245,7 @@ class Node:
         if len(atts):
             self.attribs = parseAttributes(atts)
         # Process sections
-        if self.attribs.has_key("label"):
+        if self.attribs.__contains__("label"):
             tlabel = self.attribs["label"]
             if (tlabel != "" and     
                 tlabel.startswith('{') and
@@ -256,7 +256,7 @@ class Node:
     def getLabel(self, conf, multiline=False):
         """ return the label of the node """
         if conf.NodeLabels:
-            if self.attribs.has_key('label'):
+            if self.attribs.__contains__('label'):
                 if len(self.sections) > 0:
                     if multiline:
                         return '\n'.join(self.sections[0])
@@ -272,7 +272,7 @@ class Node:
     def getLabelWidth(self, conf, multiline=False):
         """ return the maximum width label of the node label"""
         if conf.NodeLabels:
-            if self.attribs.has_key('label'):
+            if self.attribs.__contains__('label'):
                 if len(self.sections) > 0:
                     if multiline:
                         # Find maximum label width
@@ -299,7 +299,7 @@ class Node:
     def complementAttributes(self, node):
         """ from node copy all new attributes, that do not exist in self """
         for a in node.attribs:
-            if not self.attribs.has_key(a):
+            if not self.attribs.__contains__(a):
                 self.attribs[a] = node.attribs[a]
                 
     def exportDot(self, o, conf):
@@ -455,15 +455,15 @@ class Edge:
     def getLabel(self, nodes, conf):
         """ return the label of the edge """
         if conf.EdgeLabels:
-            if self.attribs.has_key('label'):
+            if self.attribs.__contains__('label'):
                 return self.attribs['label']
             else:
                 if conf.EdgeLabelsAutoComplete:
                     srclink = self.src
                     destlink = self.dest
-                    if (nodes[self.src].attribs.has_key('label')):
+                    if (nodes[self.src].attribs.__contains__('label')):
                         srclink = nodes[self.src].attribs['label']
-                    if (nodes[self.dest].attribs.has_key('label')):
+                    if (nodes[self.dest].attribs.__contains__('label')):
                         destlink = nodes[self.dest].attribs['label']
                     return "%s -> %s" % (srclink, destlink)
                 else:
@@ -474,7 +474,7 @@ class Edge:
     def complementAttributes(self, edge):
         """ from edge copy all new attributes, that do not exist in self """
         for a in edge.attribs:
-            if not self.attribs.has_key(a):
+            if not self.attribs.__contains__(a):
                 self.attribs[a] = edge.attribs[a]
                 
     def exportDot(self, o, nodes, conf):
@@ -524,9 +524,9 @@ class Edge:
         arrow_tail = conf.DefaultArrowTail
         arrow_head = conf.DefaultArrowHead
         if conf.Arrows:
-            if self.attribs.has_key('arrowtail'):
+            if self.attribs.__contains__('arrowtail'):
                 arrow_tail = self.attribs['arrowtail']
-            if self.attribs.has_key('arrowhead'):
+            if self.attribs.__contains__('arrowhead'):
                 arrow_head = self.attribs['arrowhead']
         arrow.setAttribute(u'source',u'%s' % arrow_tail)                
         arrow.setAttribute(u'target',u'%s' % arrow_head)                
